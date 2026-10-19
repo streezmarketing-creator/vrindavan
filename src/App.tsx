@@ -31,10 +31,11 @@ export const App: React.FC = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const timerRef = useRef<number | null>(null);
 
-  // Persistent audio element: remains mounted across page changes.
+  // Persistent music player: stays mounted across all pages.
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [musicPlaying, setMusicPlaying] = useState(false);
 
+  // Attempt autoplay as soon as the website loads.
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -50,6 +51,7 @@ export const App: React.FC = () => {
 
     tryPlay();
 
+    // Retry when the visitor returns to the browser tab.
     const handleVisibility = () => {
       if (!document.hidden && audio.paused) {
         tryPlay();
@@ -66,6 +68,7 @@ export const App: React.FC = () => {
     };
   }, []);
 
+  // Resolve the current page and preserve campaign tracking parameters.
   useEffect(() => {
     getAndPreserveUtmParams();
 
@@ -89,6 +92,7 @@ export const App: React.FC = () => {
     return () => window.removeEventListener('popstate', resolvePage);
   }, []);
 
+  // Show the enquiry popup after 10 seconds on the home page.
   useEffect(() => {
     if (currentPage !== 'home') {
       if (timerRef.current !== null) {
@@ -162,33 +166,37 @@ export const App: React.FC = () => {
     setIsPopupOpen(true);
   };
 
+  const toggleMusic = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (audio.paused) {
+      audio.play()
+        .then(() => setMusicPlaying(true))
+        .catch(() => setMusicPlaying(false));
+    } else {
+      audio.pause();
+      setMusicPlaying(false);
+    }
+  };
+
   return (
     <>
-      {/* Keep this audio element mounted on every page. */}
+      {/* Music remains mounted on home, thank-you and privacy pages. */}
       <audio
         ref={audioRef}
         src="/WhatsApp%20Audio%202026-10-20%20at%201.43.56%20AM.mpeg"
         autoPlay
         loop
         preload="auto"
+        onPlay={() => setMusicPlaying(true)}
+        onPause={() => setMusicPlaying(false)}
       />
 
-      {/* Optional manual playback control if autoplay is blocked. */}
+      {/* Manual playback control if the browser blocks autoplay. */}
       <button
         type="button"
-        onClick={() => {
-          const audio = audioRef.current;
-          if (!audio) return;
-
-          if (audio.paused) {
-            audio.play()
-              .then(() => setMusicPlaying(true))
-              .catch(() => setMusicPlaying(false));
-          } else {
-            audio.pause();
-            setMusicPlaying(false);
-          }
-        }}
+        onClick={toggleMusic}
         className="fixed bottom-24 right-4 z-50 rounded-full bg-[#18534F] px-4 py-3 text-sm font-semibold text-white shadow-lg"
         aria-label={musicPlaying ? 'Pause flute music' : 'Play flute music'}
       >
