@@ -45,7 +45,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenEnquireModal, onNavigatePa
       }`}
     >
       {/* Top Notification / Trust Bar with subtle spiritual peacock green accent */}
-     bg-[#2C241E] text-[#EED4B8] px-3 py-2 text-xs text-center font-normal tracking-normal flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-4 leading-tight
+    <div className="bg-[#2C241E] text-[#EED4B8] px-3 py-2 text-xs text-center font-normal tracking-normal flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-4 leading-tight">
         <span className="flex items-center gap-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-[#18534F] inline-block" />
           <span>Vrindavan Property Discovery &amp; Enquiry Assistance</span>
