@@ -18,8 +18,8 @@ export const Hero: React.FC<HeroProps> = ({ onExploreProjects, onOpenEnquire }) 
         <div className="absolute top-0 left-1/4 w-px h-full bg-[#E2D6C5]/60" />
         <div className="absolute top-0 right-1/4 w-px h-full bg-[#E2D6C5]/60" />
       </div>
-<div className="absolute top-24 right-2 sm:right-8 opacity-[0.08] pointer-events-none z-0" aria-hidden="true">
-  <svg viewBox="0 0 100 160" className="w-20 h-32 sm:w-28 sm:h-44" fill="none">
+<div className="absolute top-24 right-2 sm:right-8 opacity-30 pointer-events-none z-0" aria-hidden="true">
+  <svg viewBox="0 0 100 160" className="w-28 h-44 sm:w-36 sm:h-56 drop-shadow-sm"" fill="none">
     <path d="M50 155 C45 110 10 80 22 42 C30 15 65 5 78 30 C95 60 65 95 50 155Z" fill="#18534F"/>
     <ellipse cx="53" cy="43" rx="17" ry="25" fill="#C5A880"/>
     <ellipse cx="53" cy="43" rx="11" ry="18" fill="#18534F"/>
