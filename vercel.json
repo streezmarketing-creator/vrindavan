@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/thank-you.html",
+      "destination": "/thank-you.html"
+    },
+    {
+      "source": "/privacy-policy.html",
+      "destination": "/privacy-policy.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

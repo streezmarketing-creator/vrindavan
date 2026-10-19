@@ -1,0 +1,6 @@
+{
+  "name": "Suncity Projects Vrindavan",
+  "description": "Premium real estate discovery and lead generation platform for residential plots, villas, and apartments in Vrindavan, Mathura.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

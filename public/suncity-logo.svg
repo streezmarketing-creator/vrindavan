@@ -1,0 +1,14 @@
+<svg viewBox="0 0 460 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Suncity Projects Logo">
+  <!-- Outer Circle -->
+  <circle cx="90" cy="100" r="82" stroke="#766144" stroke-width="11" fill="none" />
+  <!-- 5 Symmetrical Spires -->
+  <polygon points="58,160 58,82 63,82 66,72 69,82 74,82 74,160 66,165" fill="#766144" />
+  <polygon points="76,165 76,55 81,55 84,45 87,55 92,55 92,165 84,171" fill="#766144" />
+  <polygon points="85,172 85,32 90,32 92.5,23 95,32 100,32 100,172 92.5,178" fill="#766144" />
+  <polygon points="93,165 93,55 98,55 101,45 104,55 109,55 109,165 101,171" fill="#766144" />
+  <polygon points="111,160 111,82 116,82 119,72 122,82 127,82 127,160 119,165" fill="#766144" />
+  <!-- Text: SUNCITY -->
+  <text x="195" y="118" fill="#766144" font-family="system-ui, -apple-system, 'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="72" letter-spacing="0.04em">SUNCITY</text>
+  <!-- Text: PROJECTS -->
+  <text x="197" y="168" fill="#766144" font-family="system-ui, -apple-system, 'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="36" letter-spacing="0.28em">PROJECTS</text>
+</svg>
