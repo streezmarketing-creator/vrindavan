@@ -168,7 +168,18 @@ export const App: React.FC = () => {
           }}
           onOpenEnquire={scrollToForm}
         />
-
+ {/* Main Lead Capture Form Section */}
+        <section id="enquire" className="py-16 sm:py-24 bg-[#FAF8F5] border-t border-[#EAE0D3]">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <LeadForm
+              initialProject={selectedProject}
+              initialPropertyType={selectedPropertyType}
+              onSuccessfulSubmission={handleLeadSuccess}
+              formId="main-enquiry-form"
+              onNavigatePrivacy={() => navigateTo('privacy')}
+            />
+          </div>
+        </section>
         {/* Multi-Project Discovery Section */}
         <ProjectDiscovery onEnquireProject={handleEnquireProject} />
 
@@ -181,18 +192,7 @@ export const App: React.FC = () => {
         {/* Location & Connectivity Section */}
         <LocationSection />
 
-        {/* Main Lead Capture Form Section */}
-        <section id="enquire" className="py-16 sm:py-24 bg-[#FAF8F5] border-t border-[#EAE0D3]">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <LeadForm
-              initialProject={selectedProject}
-              initialPropertyType={selectedPropertyType}
-              onSuccessfulSubmission={handleLeadSuccess}
-              formId="main-enquiry-form"
-              onNavigatePrivacy={() => navigateTo('privacy')}
-            />
-          </div>
-        </section>
+    
 
         {/* FAQ Accordion Section */}
         <FaqSection />
