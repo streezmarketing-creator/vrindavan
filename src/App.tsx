@@ -38,9 +38,15 @@ export const App: React.FC = () => {
     audio.volume = 0.25;
     audio.loop = true;
 
-    audio.play()
-      .then(() => setMusicPlaying(true))
-      .catch(() => setMusicPlaying(false));
+   audio.play()
+  .then(() => setMusicPlaying(true))
+  .catch(() => {
+    setTimeout(() => {
+      audio.play()
+        .then(() => setMusicPlaying(true))
+        .catch(() => setMusicPlaying(false));
+    }, 1000);
+  });
   }, []);
 
   // Initialize and handle URL routing & UTM tracking
@@ -165,7 +171,13 @@ export const App: React.FC = () => {
   // Render Main Home Discovery View
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-[#2C241E] flex flex-col justify-between selection:bg-[#E8DFD1]">
-      {/* Premium Header */}
+      {/* Premium Header */}<audio
+  ref={audioRef}
+  src="/WhatsApp%20Audio%202026-10-20%20at%201.43.56%20AM.mpeg"
+  autoPlay
+  loop
+  preload="auto"
+/>
       <Header
         onOpenEnquireModal={(project) => {
           if (project) setSelectedProject(project);
