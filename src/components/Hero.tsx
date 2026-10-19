@@ -37,12 +37,12 @@ export const Hero: React.FC<HeroProps> = ({ onExploreProjects, onOpenEnquire }) 
 
             {/* Main Headline strictly matching master prompt */}
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#1F1A17] leading-[1.12]">
-              Discover Your Property in <span className="italic font-normal text-[#18534F]">Vrindavan</span>
+              Find Your Place in the Land of <span className="italic font-normal text-[#18534F]">Krishna</span>
             </h1>
 
             {/* Master Prompt Supporting Text */}
             <p className="text-base sm:text-lg text-[#524439] leading-relaxed max-w-2xl font-normal">
-              Explore residential plots, apartments, villas and selected property opportunities across Suncity Projects in Vrindavan. Share your preferences to receive relevant details and enquiry assistance.
+              Discover thoughtfully selected plots, villas and residential opportunities in the sacred land of Vrindavan. Find your place closer to the divine love of Radha Rani and Shri Krishna, surrounded by the timeless peace and spiritual charm of Braj.
             </p>
 
             {/* Trust-focused line */}
