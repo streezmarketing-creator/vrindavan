@@ -28,6 +28,21 @@ export const App: React.FC = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const timerRef = useRef<number | null>(null);
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [musicPlaying, setMusicPlaying] = useState(false);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.volume = 0.25;
+    audio.loop = true;
+
+    audio.play()
+      .then(() => setMusicPlaying(true))
+      .catch(() => setMusicPlaying(false));
+  }, []);
+
   // Initialize and handle URL routing & UTM tracking
   useEffect(() => {
     // 1. Capture and preserve UTM parameters from landing query
