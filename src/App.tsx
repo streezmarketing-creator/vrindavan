@@ -31,11 +31,9 @@ export const App: React.FC = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const timerRef = useRef<number | null>(null);
 
-  // Persistent music player: stays mounted across all pages.
+  // Persistent background music.
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [musicPlaying, setMusicPlaying] = useState(false);
 
-  // Attempt autoplay as soon as the website loads.
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -43,24 +41,25 @@ export const App: React.FC = () => {
     audio.volume = 0.25;
     audio.loop = true;
 
-    const tryPlay = () => {
-      audio.play()
-        .then(() => setMusicPlaying(true))
-        .catch(() => setMusicPlaying(false));
+    const playMusic = () => {
+      audio.play().catch(() => {
+        // Retry when the audio file is ready.
+      });
     };
 
-    tryPlay();
+    playMusic();
+    audio.addEventListener('canplay', playMusic);
 
-    // Retry when the visitor returns to the browser tab.
     const handleVisibility = () => {
       if (!document.hidden && audio.paused) {
-        tryPlay();
+        playMusic();
       }
     };
 
     document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
+      audio.removeEventListener('canplay', playMusic);
       document.removeEventListener(
         'visibilitychange',
         handleVisibility
@@ -68,7 +67,7 @@ export const App: React.FC = () => {
     };
   }, []);
 
-  // Resolve the current page and preserve campaign tracking parameters.
+  // Resolve page and preserve UTM tracking parameters.
   useEffect(() => {
     getAndPreserveUtmParams();
 
@@ -92,7 +91,7 @@ export const App: React.FC = () => {
     return () => window.removeEventListener('popstate', resolvePage);
   }, []);
 
-  // Show the enquiry popup after 10 seconds on the home page.
+  // Show enquiry popup after 10 seconds on the home page.
   useEffect(() => {
     if (currentPage !== 'home') {
       if (timerRef.current !== null) {
@@ -166,42 +165,16 @@ export const App: React.FC = () => {
     setIsPopupOpen(true);
   };
 
-  const toggleMusic = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (audio.paused) {
-      audio.play()
-        .then(() => setMusicPlaying(true))
-        .catch(() => setMusicPlaying(false));
-    } else {
-      audio.pause();
-      setMusicPlaying(false);
-    }
-  };
-
   return (
     <>
-      {/* Music remains mounted on home, thank-you and privacy pages. */}
+      {/* Hidden persistent audio player; no music button is shown. */}
       <audio
         ref={audioRef}
         src="/WhatsApp%20Audio%202026-10-20%20at%201.43.56%20AM.mpeg"
         autoPlay
         loop
         preload="auto"
-        onPlay={() => setMusicPlaying(true)}
-        onPause={() => setMusicPlaying(false)}
       />
-
-      {/* Manual playback control if the browser blocks autoplay. */}
-      <button
-        type="button"
-        onClick={toggleMusic}
-        className="fixed bottom-24 right-4 z-50 rounded-full bg-[#18534F] px-4 py-3 text-sm font-semibold text-white shadow-lg"
-        aria-label={musicPlaying ? 'Pause flute music' : 'Play flute music'}
-      >
-        {musicPlaying ? '♫ Music On' : '♫ Play Music'}
-      </button>
 
       {currentPage === 'thank-you' ? (
         <ThankYouPage onBackToHome={() => navigateTo('home')} />
