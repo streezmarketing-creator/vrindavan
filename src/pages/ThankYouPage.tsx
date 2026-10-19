@@ -126,14 +126,7 @@ export const ThankYouPage: React.FC<ThankYouPageProps> = ({ onBackToHome }) => {
           </div>
 
           {/* Direct Contact Reference */}
-          <div className="pt-6 border-t border-[#F0EAE1] text-xs text-[#7A695B] space-y-1">
-            <p>
-              Your enquiry has been assigned to our senior representative: <strong>{PRIMARY_CONTACT.name}</strong>
-            </p>
-            <p>
-              Contact Number: <strong>{PRIMARY_CONTACT.displayPhone}</strong> (Vrindavan, Mathura)
-            </p>
-          </div>
+        
         </div>
 
         {/* Verification & Privacy notice */}
