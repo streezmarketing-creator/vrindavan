@@ -1,4 +1,4 @@
-
+```tsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
@@ -32,7 +32,7 @@ export const App: React.FC = () => {
   const timerRef = useRef<number | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Start background music immediately and retry when media is ready.
+  // Background music: one persistent audio element for every in-app page.
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -46,32 +46,38 @@ export const App: React.FC = () => {
     const startMusic = () => {
       if (disposed || !audio.paused) return;
 
-      audio.play().catch((error: unknown) => {
-        console.error('Background music playback failed:', error);
-      });
+      const playPromise = audio.play();
+
+      if (playPromise) {
+        playPromise.catch((error: unknown) => {
+          console.warn('Background music could not start:', error);
+        });
+      }
     };
 
-    const handleVisibility = () => {
+    const retryMusic = () => {
       if (!document.hidden && audio.paused) {
         startMusic();
       }
     };
 
     audio.addEventListener('canplay', startMusic);
-    document.addEventListener('visibilitychange', handleVisibility);
+    audio.addEventListener('loadeddata', startMusic);
+    document.addEventListener('visibilitychange', retryMusic);
 
-    // Trigger loading and request playback immediately.
+    // Request playback immediately; retry once the audio is ready.
     audio.load();
     startMusic();
 
     return () => {
       disposed = true;
       audio.removeEventListener('canplay', startMusic);
-      document.removeEventListener('visibilitychange', handleVisibility);
+      audio.removeEventListener('loadeddata', startMusic);
+      document.removeEventListener('visibilitychange', retryMusic);
     };
   }, []);
 
-  // Resolve the current page and preserve UTM parameters.
+  // Resolve page and preserve UTM parameters.
   useEffect(() => {
     getAndPreserveUtmParams();
 
@@ -173,13 +179,14 @@ export const App: React.FC = () => {
 
   return (
     <>
-      {/* Original music file. No visible music button. */}
+      {/* Persistent background flute music. No visible music button. */}
       <audio
         ref={audioRef}
-        src="/WhatsApp%20Audio%202026-10-20%20at%201.43.56%20AM.mpeg"
+        src="/background-music.mp3"
         autoPlay
         loop
         preload="auto"
+        playsInline
       />
 
       {currentPage === 'thank-you' ? (
@@ -252,3 +259,4 @@ export const App: React.FC = () => {
 };
 
 export default App;
+```
