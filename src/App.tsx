@@ -48,7 +48,7 @@ export const App: React.FC = () => {
       if (disposed || !audio.paused) return;
 
       audio.play().catch((error: unknown) => {
-        console.error('Flute music playback error:', error);
+        console.error('Background music playback error:', error);
       });
     };
 
@@ -58,7 +58,7 @@ export const App: React.FC = () => {
 
     const handleAudioError = () => {
       console.error(
-        'Flute file loading error:',
+        'Background music file loading error:',
         audio.error?.code,
         audio.error?.message
       );
@@ -67,7 +67,7 @@ export const App: React.FC = () => {
     audio.addEventListener('canplay', handleCanPlay);
     audio.addEventListener('error', handleAudioError);
 
-    // Try to start music immediately when the site loads.
+    // Attempt playback immediately when the website loads.
     tryPlay();
 
     return () => {
@@ -179,10 +179,10 @@ export const App: React.FC = () => {
 
   return (
     <>
-      {/* Hidden persistent audio player. No visible music button. */}
+      {/* Original audio file; no visible music button. */}
       <audio
         ref={audioRef}
-        src="/flute.mp3"
+        src="/WhatsApp%20Audio%202026-10-20%20at%201.43.56%20AM.mpeg"
         autoPlay
         loop
         preload="auto"
