@@ -30,10 +30,9 @@ export const App: React.FC = () => {
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const timerRef = useRef<number | null>(null);
-
-  // Persistent background music across all pages.
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Start background music immediately and retry when media is ready.
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -44,40 +43,35 @@ export const App: React.FC = () => {
 
     let disposed = false;
 
-    const tryPlay = () => {
+    const startMusic = () => {
       if (disposed || !audio.paused) return;
 
       audio.play().catch((error: unknown) => {
-        console.error('Background music playback error:', error);
+        console.error('Background music playback failed:', error);
       });
     };
 
-    const handleCanPlay = () => {
-      tryPlay();
+    const handleVisibility = () => {
+      if (!document.hidden && audio.paused) {
+        startMusic();
+      }
     };
 
-    const handleAudioError = () => {
-      console.error(
-        'Background music file loading error:',
-        audio.error?.code,
-        audio.error?.message
-      );
-    };
+    audio.addEventListener('canplay', startMusic);
+    document.addEventListener('visibilitychange', handleVisibility);
 
-    audio.addEventListener('canplay', handleCanPlay);
-    audio.addEventListener('error', handleAudioError);
-
-    // Attempt playback immediately when the website loads.
-    tryPlay();
+    // Trigger loading and request playback immediately.
+    audio.load();
+    startMusic();
 
     return () => {
       disposed = true;
-      audio.removeEventListener('canplay', handleCanPlay);
-      audio.removeEventListener('error', handleAudioError);
+      audio.removeEventListener('canplay', startMusic);
+      document.removeEventListener('visibilitychange', handleVisibility);
     };
   }, []);
 
-  // Resolve page and preserve UTM tracking parameters.
+  // Resolve the current page and preserve UTM parameters.
   useEffect(() => {
     getAndPreserveUtmParams();
 
@@ -179,7 +173,7 @@ export const App: React.FC = () => {
 
   return (
     <>
-      {/* Original audio file; no visible music button. */}
+      {/* Original music file. No visible music button. */}
       <audio
         ref={audioRef}
         src="/WhatsApp%20Audio%202026-10-20%20at%201.43.56%20AM.mpeg"
