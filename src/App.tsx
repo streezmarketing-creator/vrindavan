@@ -31,9 +31,10 @@ export const App: React.FC = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const timerRef = useRef<number | null>(null);
 
-  // Persistent background music across all pages.
+  // Keep the same audio element mounted across all pages.
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Start music immediately and retry when the file becomes playable.
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -42,33 +43,38 @@ export const App: React.FC = () => {
     audio.loop = true;
     audio.preload = 'auto';
 
-    const tryPlay = () => {
-      if (audio.paused) {
-        void audio.play().catch(() => {
-          // Retry when the browser reports that audio is ready.
-        });
-      }
+    let disposed = false;
+
+    const startMusic = () => {
+      if (disposed || !audio.paused) return;
+
+      audio.play().catch((error: unknown) => {
+        console.error('Background music playback failed:', error);
+      });
     };
 
-    // Request playback immediately when the app mounts.
-    tryPlay();
-
-    // Retry as soon as the audio can play.
-    audio.addEventListener('canplay', tryPlay);
-
-    // Retry if the visitor returns to the tab.
-    const handleVisibility = () => {
-      if (!document.hidden) tryPlay();
+    const handleCanPlay = () => {
+      startMusic();
     };
 
-    document.addEventListener('visibilitychange', handleVisibility);
+    const handleAudioError = () => {
+      console.error(
+        'Background music file failed to load:',
+        audio.error?.code,
+        audio.error?.message
+      );
+    };
+
+    audio.addEventListener('canplay', handleCanPlay);
+    audio.addEventListener('error', handleAudioError);
+
+    // Request playback immediately on page load.
+    startMusic();
 
     return () => {
-      audio.removeEventListener('canplay', tryPlay);
-      document.removeEventListener(
-        'visibilitychange',
-        handleVisibility
-      );
+      disposed = true;
+      audio.removeEventListener('canplay', handleCanPlay);
+      audio.removeEventListener('error', handleAudioError);
     };
   }, []);
 
@@ -101,6 +107,7 @@ export const App: React.FC = () => {
     if (currentPage !== 'home') {
       if (timerRef.current !== null) {
         window.clearTimeout(timerRef.current);
+        timerRef.current = null;
       }
       return;
     }
@@ -117,6 +124,7 @@ export const App: React.FC = () => {
     return () => {
       if (timerRef.current !== null) {
         window.clearTimeout(timerRef.current);
+        timerRef.current = null;
       }
     };
   }, [currentPage]);
@@ -172,7 +180,7 @@ export const App: React.FC = () => {
 
   return (
     <>
-      {/* Hidden music player; stays mounted on every page. */}
+      {/* Background music; no visible music button. */}
       <audio
         ref={audioRef}
         src="/WhatsApp%20Audio%202026-10-20%20at%201.43.56%20AM.mpeg"
