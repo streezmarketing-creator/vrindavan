@@ -31,10 +31,9 @@ export const App: React.FC = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const timerRef = useRef<number | null>(null);
 
-  // Keep the same audio element mounted across all pages.
+  // Persistent background music across all pages.
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Start music immediately and retry when the file becomes playable.
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -45,21 +44,21 @@ export const App: React.FC = () => {
 
     let disposed = false;
 
-    const startMusic = () => {
+    const tryPlay = () => {
       if (disposed || !audio.paused) return;
 
       audio.play().catch((error: unknown) => {
-        console.error('Background music playback failed:', error);
+        console.error('Flute music playback error:', error);
       });
     };
 
     const handleCanPlay = () => {
-      startMusic();
+      tryPlay();
     };
 
     const handleAudioError = () => {
       console.error(
-        'Background music file failed to load:',
+        'Flute file loading error:',
         audio.error?.code,
         audio.error?.message
       );
@@ -68,8 +67,8 @@ export const App: React.FC = () => {
     audio.addEventListener('canplay', handleCanPlay);
     audio.addEventListener('error', handleAudioError);
 
-    // Request playback immediately on page load.
-    startMusic();
+    // Try to start music immediately when the site loads.
+    tryPlay();
 
     return () => {
       disposed = true;
@@ -180,10 +179,10 @@ export const App: React.FC = () => {
 
   return (
     <>
-      {/* Background music; no visible music button. */}
+      {/* Hidden persistent audio player. No visible music button. */}
       <audio
         ref={audioRef}
-        src="/WhatsApp%20Audio%202026-10-20%20at%201.43.56%20AM.mpeg"
+        src="/flute.mp3"
         autoPlay
         loop
         preload="auto"
