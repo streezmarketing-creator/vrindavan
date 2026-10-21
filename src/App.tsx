@@ -29,10 +29,11 @@ export const App: React.FC = () => {
     useState<PropertyCategory>('Residential Plots');
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+
   const timerRef = useRef<number | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Background music: one persistent audio element for every in-app page.
+  // Background music: one persistent audio element for the whole app.
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -50,12 +51,17 @@ export const App: React.FC = () => {
 
       if (playPromise) {
         playPromise.catch((error: unknown) => {
-          console.warn('Background music could not start:', error);
+          // Playback may be retried after the user's first interaction.
+          console.info('Background music playback attempt:', error);
         });
       }
     };
 
-    const retryMusic = () => {
+    const retryOnInteraction = () => {
+      startMusic();
+    };
+
+    const retryWhenVisible = () => {
       if (!document.hidden && audio.paused) {
         startMusic();
       }
@@ -63,21 +69,30 @@ export const App: React.FC = () => {
 
     audio.addEventListener('canplay', startMusic);
     audio.addEventListener('loadeddata', startMusic);
-    document.addEventListener('visibilitychange', retryMusic);
 
-    // Request playback immediately; retry once the audio is ready.
+    document.addEventListener('pointerdown', retryOnInteraction);
+    document.addEventListener('keydown', retryOnInteraction);
+    document.addEventListener('touchstart', retryOnInteraction);
+    document.addEventListener('visibilitychange', retryWhenVisible);
+
+    // Request playback immediately and when the media becomes ready.
     audio.load();
     startMusic();
 
     return () => {
       disposed = true;
+
       audio.removeEventListener('canplay', startMusic);
       audio.removeEventListener('loadeddata', startMusic);
-      document.removeEventListener('visibilitychange', retryMusic);
+
+      document.removeEventListener('pointerdown', retryOnInteraction);
+      document.removeEventListener('keydown', retryOnInteraction);
+      document.removeEventListener('touchstart', retryOnInteraction);
+      document.removeEventListener('visibilitychange', retryWhenVisible);
     };
   }, []);
 
-  // Resolve page and preserve UTM parameters.
+  // Resolve the current page and preserve UTM parameters.
   useEffect(() => {
     getAndPreserveUtmParams();
 
@@ -98,16 +113,19 @@ export const App: React.FC = () => {
     resolvePage();
     window.addEventListener('popstate', resolvePage);
 
-    return () => window.removeEventListener('popstate', resolvePage);
+    return () => {
+      window.removeEventListener('popstate', resolvePage);
+    };
   }, []);
 
-  // Show enquiry popup after 10 seconds on the home page.
+  // Show the enquiry popup after 10 seconds on the home page.
   useEffect(() => {
     if (currentPage !== 'home') {
       if (timerRef.current !== null) {
         window.clearTimeout(timerRef.current);
         timerRef.current = null;
       }
+
       return;
     }
 
@@ -207,6 +225,7 @@ export const App: React.FC = () => {
             <Hero
               onExploreProjects={() => {
                 const element = document.getElementById('projects');
+
                 if (element) {
                   element.scrollIntoView({ behavior: 'smooth' });
                 }
@@ -230,10 +249,15 @@ export const App: React.FC = () => {
             </section>
 
             <ProjectDiscovery onEnquireProject={handleEnquireProject} />
-            <PropertyTypes onSelectPropertyType={handleSelectPropertyType} />
+
+            <PropertyTypes
+              onSelectPropertyType={handleSelectPropertyType}
+            />
+
             <WhyExplore />
             <LocationSection />
             <FaqSection />
+
             <FinalCta onOpenEnquire={scrollToForm} />
           </main>
 
