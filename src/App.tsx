@@ -31,7 +31,7 @@ export const App: React.FC = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const timerRef = useRef<number | null>(null);
 
-  // Persistent background music.
+  // Persistent background music across all pages.
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -40,26 +40,31 @@ export const App: React.FC = () => {
 
     audio.volume = 0.25;
     audio.loop = true;
+    audio.preload = 'auto';
 
-    const playMusic = () => {
-      audio.play().catch(() => {
-        // Retry when the audio file is ready.
-      });
+    const tryPlay = () => {
+      if (audio.paused) {
+        void audio.play().catch(() => {
+          // Retry when the browser reports that audio is ready.
+        });
+      }
     };
 
-    playMusic();
-    audio.addEventListener('canplay', playMusic);
+    // Request playback immediately when the app mounts.
+    tryPlay();
 
+    // Retry as soon as the audio can play.
+    audio.addEventListener('canplay', tryPlay);
+
+    // Retry if the visitor returns to the tab.
     const handleVisibility = () => {
-      if (!document.hidden && audio.paused) {
-        playMusic();
-      }
+      if (!document.hidden) tryPlay();
     };
 
     document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
-      audio.removeEventListener('canplay', playMusic);
+      audio.removeEventListener('canplay', tryPlay);
       document.removeEventListener(
         'visibilitychange',
         handleVisibility
@@ -167,7 +172,7 @@ export const App: React.FC = () => {
 
   return (
     <>
-      {/* Hidden persistent audio player; no music button is shown. */}
+      {/* Hidden music player; stays mounted on every page. */}
       <audio
         ref={audioRef}
         src="/WhatsApp%20Audio%202026-10-20%20at%201.43.56%20AM.mpeg"
